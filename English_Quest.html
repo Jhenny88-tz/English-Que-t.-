@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Quest</title>
+<style>
+:root{--navy:#102a43;--blue:#2f80ed;--sky:#dceeff;--bg:#f3f7fc;--card:#fff;--text:#203040;--muted:#657786;--green:#20a675}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:white;padding:22px 18px;text-align:center}header h1{margin:0;font-size:27px}header p{margin:7px 0 0;color:#d8e7f5}
+main{max-width:900px;margin:0 auto;padding:18px 16px 100px}.screen{display:none}.screen.active{display:block}
+.card{background:var(--card);border:1px solid #e3eaf2;border-radius:17px;padding:18px;margin:14px 0;box-shadow:0 2px 7px #102a4310}
+h2{color:var(--navy);margin:8px 0 6px}h3{margin:4px 0 12px;color:var(--navy)}p{line-height:1.5}
+button,.btn{border:0;background:var(--blue);color:white;font-weight:bold;padding:12px 16px;border-radius:11px;cursor:pointer;margin:5px 4px 5px 0}
+button.secondary{background:var(--sky);color:var(--navy)}button.option{display:block;width:100%;text-align:left;background:#f4f8fc;color:var(--navy);border:1px solid #dce5ef}
+button.option.selected{border:2px solid var(--blue);background:var(--sky)}
+input{padding:12px;border:1px solid #cbd6e2;border-radius:10px;width:100%;margin:7px 0 12px;font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}.tile{background:var(--sky);padding:15px;border-radius:13px;text-align:center;font-weight:bold;color:var(--navy)}
+nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #dce5ef;display:flex;justify-content:space-around;padding:8px 3px;z-index:10}
+nav button{background:transparent;color:#657786;margin:0;padding:7px 4px;font-size:12px;flex:1}
+nav button.active{color:var(--blue)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.word{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #e7edf4;padding:11px 0}.muted{color:var(--muted);font-size:13px}
+.progress{height:10px;background:#dce5ef;border-radius:20px;overflow:hidden}.progress span{display:block;height:100%;width:0;background:var(--green)}
+.stat{font-size:25px;font-weight:bold;color:var(--blue)}.hidden{display:none!important}
+body.dark{--bg:#101820;--card:#1d2b36;--text:#f4f7fa;--muted:#b7c4ce}body.dark .card{border-color:#354754}body.dark h2,body.dark h3{color:#b8d9ff}body.dark nav{background:#1d2b36;border-color:#354754}body.dark nav button{color:#b7c4ce}body.dark button.option{background:#263946;color:white;border-color:#354754}
+footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<header><h1>🌎 English Quest</h1><p>Aprende inglés paso a paso, practicando y jugando.</p></header>
+<main>
+<section id="welcome" class="screen active">
+ <div class="card">
+  <h2>¡Bienvenido/a a English Quest!</h2>
+  <p>Una aventura para desarrollar tus habilidades en inglés.</p>
+  <label for="student">¿Cómo te llamas?</label><input id="student" placeholder="Escribe tu nombre">
+  <button onclick="go('levels')">Comenzar</button>
+ </div>
+</section>
+<section id="levels" class="screen">
+ <h2>Selecciona tu nivel</h2><p>Elige un nivel o realiza la prueba diagnóstica.</p>
+ <div id="levelChoices" class="grid"></div>
+ <div class="card"><button onclick="startQuiz()">Realizar prueba diagnóstica</button><button class="secondary" onclick="go('home')">Continuar con el nivel elegido</button></div>
+</section>
+<section id="quiz" class="screen">
+ <h2>Prueba diagnóstica</h2><p id="quizCount"></p><div class="card"><h3 id="question"></h3><div id="answers"></div><button onclick="nextQuestion()">Siguiente</button></div>
+ <p class="muted">Evaluación de demostración. Una evaluación completa debe incluir vocabulario, gramática, reading y listening.</p>
+</section>
+<section id="home" class="screen">
+ <h2 id="hello">Hello! 👋</h2><p>Tu espacio para aprender inglés cada día.</p>
+ <div class="card" style="background:#102a43;color:white"><p class="muted" style="color:#c8ddf2">YOUR LEARNING LEVEL</p><h2 id="homeLevel" style="color:white">A1 · Beginner</h2><div class="progress"><span id="progressBar"></span></div><p id="progressText">0% de progreso</p></div>
+ <div class="card"><h3>🔥 Today’s Challenge</h3><p>Complete the sentence: <b>I ___ to school every day.</b></p><div class="row"><button onclick="challenge('go')">go</button><button class="secondary" onclick="challenge('goes')">goes</button><button class="secondary" onclick="challenge('going')">going</button></div></div>
+ <div class="card"><h3>📅 Today’s Plan</h3><p>☐ 10 min – Vocabulary</p><p>☐ 10 min – Listening</p><p>☐ 10 min – Speaking</p><p>☐ 10 min – Reading</p><p>☐ 10 min – Game</p></div>
+</section>
+<section id="learn" class="screen">
+ <h2>📚 Learn</h2><p>Aprende vocabulario y gramática.</p>
+ <div class="card"><h3>Vocabulary</h3><div id="vocabulary"></div></div>
+ <div class="card"><h3>Grammar · Verb to be</h3><p><b>I am · You are · He/She is</b></p><p>Example: She is my friend.</p><button onclick="award(20)">Practicar gramática +20 XP</button></div>
+ <div class="card"><h3>Palabras guardadas</h3><p id="savedWords">Todavía no guardaste palabras.</p></div>
+</section>
+<section id="practice" class="screen">
+ <h2>🎧 Practice</h2><p>Desarrolla las cuatro habilidades del idioma.</p>
+ <div class="card"><h3>🎵 Sing and Learn</h3><p>Practica con canciones autorizadas y actividades para completar palabras, reconocer vocabulario y ordenar frases.</p><button onclick="award(10)">Completar práctica +10 XP</button></div>
+ <div class="card"><h3>🎬 Videos</h3><p>Videos educativos con subtítulos y preguntas de comprensión.</p><button onclick="award(10)">Completar práctica +10 XP</button></div>
+ <div class="card"><h3>🎤 Speaking</h3><p>Practica conversaciones cotidianas en inglés. Puedes repetir en voz alta:</p><b>Hello! How are you?</b><br><button onclick="speak('Hello! How are you?')">🔊 Escuchar ejemplo</button><button onclick="award(10)">Marcar como practicado</button></div>
+ <div class="card"><h3>📖 Reading</h3><p>Lee textos breves y responde preguntas de comprensión.</p><button onclick="award(10)">Completar práctica +10 XP</button></div>
+ <div class="card"><h3>✍️ Writing</h3><p>Escribe una oración en inglés:</p><input id="writingAnswer" placeholder="Write a sentence in English"><button onclick="writing()">Revisar y practicar</button></div>
+ <p class="muted">Los audios, videos y canciones completas deben agregarse desde fuentes propias o autorizadas.</p>
+</section>
+<section id="games" class="screen">
+ <h2>🎮 Games</h2><p>Aprende jugando y gana recompensas.</p><div id="gamesList" class="grid"></div>
+</section>
+<section id="progress" class="screen">
+ <h2>🏆 My Progress</h2><div class="grid">
+ <div class="card"><div class="stat" id="xp">0</div><span class="muted">XP obtenidos</span></div>
+ <div class="card"><div class="stat" id="activities">0</div><span class="muted">Actividades</span></div>
+ <div class="card"><div class="stat">🔥 1</div><span class="muted">Racha de demostración</span></div></div>
+ <div class="card"><h3>Learning Path</h3><p>✅ Unit 1 – Hello!</p><p id="unit2">🔒 Unit 2 – My Family</p><p>🔒 Unit 3 – My Daily Life</p><p>🔒 Unit 4 – Food</p><p>🔒 Unit 5 – My School</p></div>
+ <div class="card"><h3>Configuración</h3><label>Modo oscuro</label><input type="checkbox" style="width:auto" onchange="document.body.classList.toggle('dark',this.checked)"><p>Cambiar nivel:</p><div id="levelSettings" class="row"></div></div>
+</section>
+<footer>English Quest · Prototipo educativo inicial</footer>
+</main>
+<nav id="navbar" class="hidden">
+ <button onclick="showTab('home',this)" class="active">🏠<br>Inicio</button>
+ <button onclick="showTab('learn',this)">📚<br>Aprende</button>
+ <button onclick="showTab('practice',this)">🎧<br>Practica</button>
+ <button onclick="showTab('games',this)">🎮<br>Juegos</button>
+ <button onclick="showTab('progress',this)">🏆<br>Progreso</button>
+</nav>
+<script>
+const levels=[['A1','Beginner','Aprendizaje desde cero'],['A2','Elementary','Comunicación básica'],['B1','Intermediate','Comunicación independiente'],['B2','Upper Intermediate','Mayor fluidez']];
+const words=[['Mother','Madre','This is my mother.'],['Father','Padre','This is my father.'],['Book','Libro','It is a book.'],['Apple','Manzana','I eat an apple.'],['Dog','Perro','The dog is small.']];
+const questions=[{q:'Choose the correct sentence: "Yo soy estudiante."',a:['I am a student.','I is a student.','I are student.'],c:0},{q:'What is "sister" in Spanish?',a:['Hermano','Hermana','Madre'],c:1},{q:'Complete: "She ___ my teacher."',a:['am','are','is'],c:2}];
+let level='A1',xp=0,activities=0,saved=[],qi=0,selected=-1;
+function go(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');if(id==='home')updateHome();if(id==='progress')updateProgress();if(id==='learn')renderWords();document.getElementById('navbar').classList.toggle('hidden',['welcome','levels','quiz'].includes(id))}
+function renderLevels(){document.getElementById('levelChoices').innerHTML=levels.map(l=>`<button class="tile" onclick="setLevel('${l[0]}')"><b>${l[0]} – ${l[1]}</b><br><small>${l[2]}</small></button>`).join('');document.getElementById('levelSettings').innerHTML=levels.map(l=>`<button class="secondary" onclick="setLevel('${l[0]}')">${l[0]}</button>`).join('')}
+function setLevel(l){level=l;updateHome();alert('Nivel seleccionado: '+l)}
+function startQuiz(){qi=0;selected=-1;go('quiz');renderQuestion()}
+function renderQuestion(){let q=questions[qi];document.getElementById('quizCount').textContent=`Pregunta ${qi+1} de ${questions.length}`;document.getElementById('question').textContent=q.q;document.getElementById('answers').innerHTML=q.a.map((a,i)=>`<button class="option ${selected===i?'selected':''}" onclick="selected=${i};renderQuestion()">${String.fromCharCode(65+i)}. ${a}</button>`).join('')}
+function nextQuestion(){if(selected<0){alert('Selecciona una respuesta.');return}if(selected===questions[qi].c)xp+=10;if(qi<questions.length-1){qi++;selected=-1;renderQuestion()}else{level='A1';alert('Evaluación finalizada. Tu nivel inicial sugerido es A1. Puedes cambiarlo.');go('home')}}
+function award(n){xp+=n;activities++;updateProgress();alert('¡Muy bien! Has ganado '+n+' XP.')}
+function challenge(answer){if(answer==='go')award(20);else alert('Inténtalo otra vez. Piensa en el sujeto “I”.')}
+function renderWords(){document.getElementById('vocabulary').innerHTML=words.map(w=>`<div class="word"><div><b>${w[0]}</b><br><span class="muted">${w[1]} · ${w[2]}</span></div><button class="secondary" onclick="toggleSave('${w[0]}')">${saved.includes(w[0])?'⭐':'☆'}</button></div>`).join('');document.getElementById('savedWords').textContent=saved.length?saved.join(', '):'Todavía no guardaste palabras.'}
+function toggleSave(w){saved=saved.includes(w)?saved.filter(x=>x!==w):[...saved,w];renderWords()}
+function updateHome(){let n=document.getElementById('student').value.trim();document.getElementById('hello').textContent='Hello'+(n?', '+n:'')+'! 👋';document.getElementById('homeLevel').textContent=level+' · '+levels.find(x=>x[0]===level)[1];document.getElementById('progressBar').style.width=Math.min(activities*10,100)+'%';document.getElementById('progressText').textContent=Math.min(activities*10,100)+'% de progreso inicial'}
+function updateProgress(){document.getElementById('xp').textContent=xp;document.getElementById('activities').textContent=activities;if(activities>=2)document.getElementById('unit2').textContent='🔓 Unit 2 – My Family'}
+function showTab(id,btn){go(id);document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+function speak(t){if('speechSynthesis'in window){let u=new SpeechSynthesisUtterance(t);u.lang='en-US';speechSynthesis.speak(u)}else alert('Tu navegador no admite lectura de voz.')}
+function writing(){let v=document.getElementById('writingAnswer').value.trim();if(v.length<3)alert('Escribe una oración un poco más larga.');else{award(10);alert('¡Buen trabajo! Tu respuesta fue registrada en esta demostración.')}} 
+const games=['🧠 Memory Game','🔤 Word Scramble','📝 Complete the Sentence','🎯 Multiple Choice','🖼️ Match Image and Word','🔊 Listen and Choose','🧩 Arrange the Sentence','⏱️ Quick Quiz'];
+document.getElementById('gamesList').innerHTML=games.map(g=>`<div class="tile">${g}<br><button onclick="award(20)">Jugar +20 XP</button></div>`).join('');
+renderLevels();
+</script>
+</body>
+</html>
